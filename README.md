@@ -1,51 +1,92 @@
-Here's a polished README that feels like a real project developed during an internship rather than an academic assignment. It is professional, easy to read, recruiter-friendly, and GitHub-friendly.
-
----
+<div align="center">
 
 # 🚀 Automated Time-Series Forecasting & Analysis Platform
 
-An end-to-end Full-Stack Data Analytics and Forecasting Platform that transforms raw datasets into actionable insights through automated preprocessing, exploratory data analysis (EDA), and multi-model forecasting.
+### End-to-End Data Analytics, Forecasting & Visualization Solution
 
-This project was developed during my internship at **EY (Ernst & Young)** as part of a real-world data analytics and forecasting workflow. The platform enables users to upload datasets, analyze trends, compare forecasting models, and generate future predictions through an interactive web interface.
+Built during my internship at EY (Ernst & Young)
 
----
+<img src="images/upload.png" width="95%">
 
-## 📸 Project Preview
-
-### Dashboard Overview
-
-![Dashboard](images/dashboard.png)
-
-### EDA & Forecasting
-
-![EDA](images/eda.png)
-
-![Forecast](images/forecast.png)
-
-### Model Comparison
-
-![Leaderboard](images/leaderboard.png)
+</div>
 
 ---
 
-# 🎯 Project Objective
+## 🌟 Overview
 
-The primary goal of this project was to simplify the complete forecasting pipeline by combining:
+This project is a full-stack forecasting platform that automates the complete workflow of time-series analysis.
 
-* Data Upload
-* Data Cleaning
-* Exploratory Data Analysis
-* Forecasting
-* Model Evaluation
-* Future Prediction
+From dataset upload to future prediction, the platform helps users analyze data, generate insights, compare multiple forecasting models, and obtain accurate forecasts through an interactive dashboard.
 
-into a single user-friendly platform.
+### Key Highlights
 
-Instead of manually performing each step, users can upload a dataset and receive insights and forecasts automatically.
+✅ Automated Data Preprocessing
+
+✅ Interactive Exploratory Data Analysis (EDA)
+
+✅ Multi-Model Forecasting Engine
+
+✅ Dynamic Model Comparison Leaderboard
+
+✅ Future Forecast Generation
+
+✅ Modern Full-Stack Architecture
 
 ---
 
-# 🔄 Application Workflow
+# 📸 Application Screenshots
+
+## 📂 Dataset Upload & Data Import
+
+<p align="center">
+<img src="images/upload.png" width="90%">
+</p>
+
+Upload datasets and automatically prepare them for analysis.
+
+---
+
+## 📊 Interactive EDA Dashboard
+
+<p align="center">
+<img src="images/eda-dashboard.png" width="90%">
+</p>
+
+Explore trends, distributions, correlations, and business insights through interactive visualizations.
+
+---
+
+## 🤖 Forecasting Dashboard
+
+<p align="center">
+<img src="images/forecasting.png" width="90%">
+</p>
+
+Train multiple forecasting models and visualize predictions against actual data.
+
+---
+
+## 🏆 Model Performance Leaderboard
+
+<p align="center">
+<img src="images/leaderboard.png" width="90%">
+</p>
+
+Compare forecasting models using multiple evaluation metrics and identify the best performer automatically.
+
+---
+
+## 🔮 Future Forecast Generation
+
+<p align="center">
+<img src="images/future-forecast.png" width="90%">
+</p>
+
+Generate future predictions using the top-performing model.
+
+---
+
+# 🎯 Project Workflow
 
 ```text
 Dataset Upload
@@ -56,164 +97,76 @@ Data Preprocessing
       ↓
 Exploratory Data Analysis
       ↓
-Forecast Model Training
+Model Training
       ↓
 Model Evaluation
       ↓
-Best Model Selection
+Leaderboard Ranking
       ↓
 Future Forecast Generation
 ```
 
 ---
 
-# ✨ Key Features
+# ✨ Features
 
-## 📂 Dataset Upload
+## 📂 Data Upload
 
-Upload CSV datasets directly through the web interface.
-
-### Features
-
-* Drag and Drop Upload
-* CSV File Support
-* Dataset Preview
-* Automatic Column Detection
-
----
+- CSV Dataset Support
+- Data Preview
+- Automatic Column Detection
 
 ## 🔍 Data Exploration
 
-Understand the dataset before analysis begins.
+- Dataset Overview
+- Data Type Detection
+- Column Analysis
 
-### Features
+## 🧹 Automated Preprocessing
 
-* Column Information
-* Data Type Identification
-* Dataset Summary
-* Sample Data Preview
+- Missing Value Handling
+- Duplicate Removal
+- Outlier Detection
+- Scaling & Normalization
+- Intelligent Data Aggregation
 
----
+## 📊 Exploratory Data Analysis
 
-## 🧹 Automated Data Preprocessing
+- Trend Analysis
+- Weekly Analysis
+- Monthly Analysis
+- Product-wise Analysis
+- Store-wise Analysis
+- Correlation Heatmaps
+- Interactive Filters
 
-Prepare data for forecasting using automated preprocessing techniques.
+## 🤖 Forecasting Models
 
-### Features
+Implemented multiple forecasting approaches:
 
-* Missing Value Handling
-* Duplicate Removal
-* Outlier Detection
-* Data Scaling
-* Data Normalization
-* Intelligent Aggregation for Large Datasets
+- ARIMA
+- Prophet
+- LSTM
+- ETS
+- XGBoost
+- Random Forest
 
-This ensures the dataset is clean and ready for accurate forecasting.
+## 🏆 Model Evaluation
 
----
+Performance comparison using:
 
-## 📊 Exploratory Data Analysis (EDA)
+- RMSE
+- MAE
+- MAPE
+- Pearson Correlation
 
-The platform automatically generates meaningful visualizations and insights.
+The system automatically selects the best-performing model.
 
-### Analysis Performed
+## 🔮 Future Forecasting
 
-### 📈 Sales Trend Analysis
-
-Understand sales behavior over time.
-
-### 📅 Monthly & Yearly Analysis
-
-Identify seasonal and long-term trends.
-
-### 📆 Weekly Analysis
-
-Compare week-to-week variations.
-
-### 🏪 Store-wise Analysis
-
-Evaluate performance across stores.
-
-### 📦 Product-wise Analysis
-
-Analyze product category performance.
-
-### 🔥 Correlation Analysis
-
-Identify relationships between different variables.
-
-### Interactive Features
-
-* Dynamic Filters
-* Interactive Charts
-* Custom Analysis
-* Real-Time Visualization Updates
-
----
-
-## 🤖 Multi-Model Forecasting Engine
-
-The forecasting engine trains multiple models simultaneously and compares their performance.
-
-### Implemented Models
-
-### ARIMA
-
-Statistical forecasting model for trend-based time series.
-
-### Prophet
-
-Meta's forecasting framework capable of handling seasonality and trends.
-
-### LSTM
-
-Deep Learning model designed to capture complex temporal patterns.
-
-### ETS
-
-Exponential smoothing forecasting model.
-
-### XGBoost
-
-Tree-based forecasting model using lag feature engineering.
-
-### Random Forest
-
-Ensemble learning model for non-linear forecasting patterns.
-
----
-
-## 🏆 Model Evaluation & Leaderboard
-
-Every trained model is automatically evaluated and ranked.
-
-### Evaluation Metrics
-
-* RMSE
-* MAE
-* MAPE
-* Pearson Correlation
-
-### Intelligent Model Selection
-
-The platform selects the best-performing model automatically and highlights it for future forecasting.
-
-Unlike traditional systems that rely only on error metrics, the platform also uses **Pearson Correlation** to measure how closely the forecast follows the actual trend pattern.
-
-This helps identify models that not only reduce error but also accurately capture real-world behavior.
-
----
-
-## 🔮 Future Forecast Generation
-
-Generate future predictions using the best-performing model.
-
-### Features
-
-* Future Sales Forecasting
-* Trend Visualization
-* Forecast Comparison
-* Prediction Confidence Analysis
+- Future Trend Prediction
+- Forecast Visualization
+- Model-Based Forecast Generation
 
 ---
 
@@ -241,106 +194,93 @@ Engine     Engine       Engine
 
 # 🛠 Tech Stack
 
-## Frontend
+<table>
+<tr>
+<td><b>Frontend</b></td>
+<td>React, Next.js, TypeScript, Tailwind CSS</td>
+</tr>
 
-* React
-* Next.js
-* TypeScript
-* Tailwind CSS
-* Recharts
+<tr>
+<td><b>Backend</b></td>
+<td>FastAPI, Python</td>
+</tr>
 
-## Backend
+<tr>
+<td><b>Data Processing</b></td>
+<td>Pandas, NumPy</td>
+</tr>
 
-* FastAPI
-* Python
+<tr>
+<td><b>Visualization</b></td>
+<td>Recharts</td>
+</tr>
 
-## Data Processing
+<tr>
+<td><b>Forecasting</b></td>
+<td>ARIMA, Prophet, ETS, XGBoost, Random Forest, LSTM</td>
+</tr>
 
-* Pandas
-* NumPy
-
-## Machine Learning & Forecasting
-
-* Scikit-Learn
-* Prophet
-* ARIMA
-* ETS
-* XGBoost
-* Random Forest
-* TensorFlow / LSTM
-
-## State Management
-
-* Zustand
+<tr>
+<td><b>State Management</b></td>
+<td>Zustand</td>
+</tr>
+</table>
 
 ---
 
 # 📈 Key Achievements
 
-✅ Developed a complete forecasting platform from data upload to future prediction.
-
-✅ Automated preprocessing and EDA workflows.
-
-✅ Integrated multiple forecasting models into a single system.
-
-✅ Built interactive dashboards for data visualization.
-
-✅ Implemented dynamic model comparison and ranking.
-
-✅ Created a scalable architecture ready for AI-powered enhancements.
+- Developed an end-to-end forecasting platform.
+- Automated preprocessing and EDA workflows.
+- Integrated multiple forecasting models.
+- Built interactive dashboards for business insights.
+- Implemented dynamic model ranking.
+- Designed a scalable architecture for future AI integration.
 
 ---
 
-# 💡 Future Enhancements
+# 🔮 Future Improvements
 
-### 🧠 LLM-Powered Business Insights
+### 🧠 LLM-Powered Analytics
 
-Integrate Large Language Models (LLMs) to automatically interpret EDA results, forecasting outputs, and model performance.
+Integrate Large Language Models (LLMs) to automatically interpret EDA findings and forecasting results.
 
-The system will generate human-readable insights, business recommendations, trend explanations, and decision-support summaries based on analytical results.
+The platform will generate:
 
-### ⚙️ Advanced Forecast Optimization
+- Automated insights
+- Business recommendations
+- Trend explanations
+- Forecast summaries
+- Decision-support reports
 
-* Automated Hyperparameter Tuning
-* Ensemble Forecasting
-* Auto Model Selection
+### Additional Enhancements
 
-### ☁️ Cloud Deployment
-
-Deploy the platform on cloud infrastructure for scalability and accessibility.
-
-### 📡 Real-Time Forecasting
-
-Support continuously updating datasets and live forecasting.
-
-### 📄 Smart Reporting
-
-Generate downloadable PDF and Excel reports containing insights, visualizations, and forecasts.
-
-### 🚨 Advanced Anomaly Detection
-
-Automatically detect unusual patterns, sales anomalies, and sudden demand fluctuations.
+- Hyperparameter Tuning
+- Ensemble Forecasting
+- Cloud Deployment
+- Real-Time Forecasting
+- PDF & Excel Report Export
+- Advanced Anomaly Detection
 
 ---
 
 # 👨‍💻 Internship Project
 
-This project was developed during my internship at **Ernst & Young** under the guidance of **Subhojit Sarkar**.
+Developed during my internship at **EY (Ernst & Young)** under the guidance of **Subhojit Sarkar**.
 
-The project combines Data Analytics, Machine Learning, Forecasting, and Full-Stack Development to create a practical solution for automated time-series analysis and forecasting.
+This project strengthened my skills in:
 
----
-
-# 📬 Contact
-
-**Sudipa Pal**
-
-📧 Email: *Your Email Here*
-
-💼 LinkedIn: *Your LinkedIn Profile Here*
-
-🔗 GitHub: *Your GitHub Profile Here*
+- Machine Learning
+- Time-Series Forecasting
+- Data Analytics
+- Data Visualization
+- Full-Stack Development
+- Model Evaluation
 
 ---
 
-⭐ If you found this project interesting, feel free to star the repository and connect with me!
+<div align="center">
+
+### ⭐ If you found this project interesting, feel free to star the repository.
+
+</div>
