@@ -4,8 +4,6 @@
 
 ### End-to-End Data Analytics, Forecasting & Visualization Solution
 
-Built during my internship at EY (Ernst & Young)
-
 </div>
 
 ---
@@ -261,22 +259,6 @@ The platform will generate:
 - Advanced Anomaly Detection
 
 ---
-
-# 👨‍💻 Internship Project
-
-Developed during my internship at **EY (Ernst & Young)** under the guidance of **Subhojit Sarkar**.
-
-This project strengthened my skills in:
-
-- Machine Learning
-- Time-Series Forecasting
-- Data Analytics
-- Data Visualization
-- Full-Stack Development
-- Model Evaluation
-
----
-
 <div align="center">
 
 ### ⭐ If you found this project interesting, feel free to star the repository.
