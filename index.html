@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EDA and Forecasting</title>
+  <meta name="description" content="Upload your CSV or Excel data to begin analysis and forecasting with EDA and Forecasting." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+
+  <main class="main-container">
+    <section class="step-section" id="step-0">
+      <div class="file-uploader-wrapper">
+        <div class="section-header">
+          <h2 class="section-title">Upload Your Data</h2>
+          <p class="section-desc">Upload a CSV or Excel file to begin your data analysis journey</p>
+        </div>
+
+        <div class="upload-stack">
+          <div class="drop-zone" id="dropZone">
+            <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" class="hidden-input" />
+            <div class="drop-zone-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <h3 class="drop-zone-title" id="dropZoneTitle">Drag and drop your file here</h3>
+            <p class="drop-zone-sub">or click to browse from your computer</p>
+            <p class="drop-zone-formats">Supported formats: CSV, Excel (.xlsx, .xls) • Max 50MB</p>
+          </div>
+
+          <div class="alert alert-error hidden" id="uploadError">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div>
+              <p class="alert-title">Upload Failed</p>
+              <p class="alert-msg" id="uploadErrorMsg"></p>
+            </div>
+          </div>
+
+          <div class="alert alert-success hidden" id="uploadSuccess">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <div>
+              <p class="alert-title" style="color: var(--green-900)">File uploaded successfully!</p>
+              <p class="alert-msg" style="color: var(--green-700)">Proceeding to data explorer...</p>
+            </div>
+          </div>
+
+          <div class="info-box">
+            <h4 class="info-box-title">File Requirements:</h4>
+            <ul class="info-box-list">
+              <li><span class="bullet blue">•</span><span>First row should contain column headers</span></li>
+              <li><span class="bullet blue">•</span><span>Support for CSV, Excel (.xlsx, .xls) formats</span></li>
+              <li><span class="bullet blue">•</span><span>Maximum file size: 50MB</span></li>
+              <li><span class="bullet blue">•</span><span>Numeric and text data types are supported</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="common.js?v=999"></script>
+  <script src="upload.js?v=999"></script>
+</body>
+</html>

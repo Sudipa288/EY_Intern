@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EDA - Discovery Hub</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .discovery-grid { display: grid; grid-template-columns: 1fr; gap: 30px; margin-top: 40px; }
+    .analysis-panel { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--slate-100); display: none; }
+    .btn-analyze-sparkle {
+      background: var(--blue-50); color: var(--blue-700); border: 1px solid var(--blue-200);
+      padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .filter-chip {
+      padding: 8px 20px; border-radius: 50px; border: 1px solid var(--slate-200); background: white;
+      font-size: 13px; font-weight: 600; color: var(--slate-600); cursor: pointer; transition: all 0.2s;
+    }
+    .filter-chip.active { background: var(--blue-600); color: white; border-color: var(--blue-700); }
+    .filter-chip:hover:not(.active) { background: var(--slate-50); border-color: var(--slate-300); }
+    
+    .tab-btn {
+      background: none; border: none; padding: 10px 20px; font-size: 15px; font-weight: 700;
+      color: var(--slate-400); cursor: pointer; position: relative; transition: all 0.3s;
+    }
+    .tab-btn.active { color: var(--blue-600); }
+    .tab-btn.active::after {
+      content: ""; position: absolute; bottom: -16px; left: 0; width: 100%; height: 3px;
+      background: var(--blue-600); border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="bg-slate-50">
+  <!-- HARD-CODED NAVIGATION (ZERO-FAIL MODE) -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <div class="nav-left">
+        <div class="nav-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <div>
+          <h1 class="nav-title">EDA and Forecasting</h1>
+          <p class="nav-subtitle">Data Analysis & Forecasting</p>
+        </div>
+      </div>
+      <div class="nav-steps" id="navSteps">
+        <button class="nav-step-circle active" onclick="window.location.href='index.html'">1</button>
+        <div class="nav-step-line active"></div>
+        <button class="nav-step-circle active" onclick="window.location.href='explorer.html'">2</button>
+        <div class="nav-step-line active"></div>
+        <button class="nav-step-circle active" onclick="window.location.href='preprocessing.html'">3</button>
+        <div class="nav-step-line active"></div>
+        <button class="nav-step-circle active" onclick="window.location.href='eda.html'">4</button>
+        <div class="nav-step-line inactive"></div>
+        <button class="nav-step-circle inactive" onclick="window.location.href='forecasting.html'">5</button>
+        <div class="nav-step-line inactive"></div>
+        <button class="nav-step-circle inactive" onclick="window.location.href='results.html'">6</button>
+      </div>
+      <div class="nav-right">
+        <p class="nav-step-label">EDA Discovery Hub</p>
+        <p class="nav-step-count">Step 4 of 6</p>
+      </div>
+    </div>
+  </nav>
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill" id="progressBarFill" style="width: 60%"></div>
+  </div>
+
+  <main class="main-container">
+    <section class="step-section">
+      <div class="section-header">
+        <h2 class="section-title">EDA Discovery Hub</h2>
+        <p class="section-desc">Interactive analysis and strategic comparisons driven by your data.</p>
+      </div>
+
+      <div class="workspace-area">
+        <!-- TAB NAVIGATION -->
+        <div class="tabs-container mb-8" style="display:flex; justify-content:center; gap:20px; border-bottom:1px solid var(--slate-100); padding-bottom:15px; overflow-x: auto;">
+          <button class="tab-btn active" id="tabCustom" onclick="switchTab('custom')">📊 Custom Discovery</button>
+          <button class="tab-btn" id="tabAdvanced" onclick="switchTab('advanced')">🚀 Advanced Analytics</button>
+          <button class="tab-btn" id="tabTrends" onclick="switchTab('trends')">📈 Comparative Trends</button>
+        </div>
+
+        <!-- SECTION 1: CUSTOM DISCOVERY -->
+        <div id="sectionCustom">
+          <!-- FACTOR TYPE FILTER BAR -->
+          <div class="filter-bar mb-8" style="display:flex; justify-content:center; gap:12px; background:var(--slate-50); padding:12px; border-radius:12px; border:1px solid var(--slate-100);">
+            <span style="font-size:11px; font-weight:800; color:var(--slate-400); align-self:center; margin-right:10px; text-transform:uppercase; letter-spacing:0.5px;">Intelligent Filter:</span>
+            <button class="filter-chip active" id="btn-all" onclick="filterType('all')">All Factors</button>
+            <button class="filter-chip" id="btn-numeric" onclick="filterType('numeric')">📈 Numeric</button>
+            <button class="filter-chip" id="btn-binary" onclick="filterType('binary')">⚖️ Binary (0/1)</button>
+            <button class="filter-chip" id="btn-others" onclick="filterType('others')">🌍 Others</button>
+          </div>
+
+          <div class="card mb-8">
+            <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+              <h3 class="card-title">Custom Discovery Controls</h3>
+              <button class="btn btn-sm btn-outline" onclick="togglePresets()" style="border-radius:20px; font-size:12px; padding:5px 15px;">💡 Show Presets</button>
+            </div>
+            
+            <!-- Collapsible Presets -->
+            <div id="presetsPanel" style="display:none; background:var(--slate-50); border-bottom:1px solid var(--slate-100); padding:15px; border-radius:0 0 12px 12px; margin-top:-10px; margin-bottom:15px;">
+              <div style="display:flex; gap:10px; justify-content:center;">
+                <button class="btn btn-sm btn-outline" onclick="quickGraph('Promotion', 'Sales', 'bar')">📢 Promotion</button>
+                <button class="btn btn-sm btn-outline" onclick="quickGraph('Epidemic', 'Sales', 'line')">🦠 Epidemic</button>
+                <button class="btn btn-sm btn-outline" onclick="quickGraph('Store', 'Sales', 'bar')">🏪 Store Performance</button>
+                <button class="btn btn-sm btn-outline" onclick="quickGraph('Product', 'Sales', 'bar')">📦 Products</button>
+              </div>
+            </div>
+
+            <div class="card-body" style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 20px; align-items: end; padding: 24px;">
+              <div class="form-group">
+                <label class="detail-label">1. Graph Type</label>
+                <select id="graphType" class="select-input">
+                  <option value="bar">Bar Graph</option>
+                  <option value="line">Line Chart</option>
+                  <option value="scatter">Scatter Plot</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="detail-label">2. X-Axis Factor</label>
+                <select id="columnX" class="select-input"></select>
+              </div>
+              <div class="form-group">
+                <label class="detail-label">3. Y-Axis Factor</label>
+                <select id="columnY" class="select-input"></select>
+              </div>
+              <button class="btn btn-primary" style="height: 46px; padding: 0 30px;" onclick="generateGraph()">Generate View</button>
+            </div>
+          </div>
+
+          <div id="discoveryGrid">
+            <div id="canvasEmptyState" class="empty-canvas" style="padding: 100px 0; text-align:center;">
+              <div class="empty-icon">📊</div>
+              <h3>Discovery Canvas Ready</h3>
+              <p>Select your factors above to begin your data discovery.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 2: ADVANCED ANALYTICS -->
+        <div id="sectionAdvanced" style="display:none;">
+          <div class="card" style="border-top: 4px solid var(--indigo-600); background: linear-gradient(to bottom, #ffffff, #f8fafc);">
+            <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+              <h3 class="card-title">Week-wise Performance Matrix</h3>
+              <div style="width:250px;">
+                <label class="detail-label">Compare Units Sold with:</label>
+                <select id="advFactor" class="select-input" onchange="updateAdvancedHub()"></select>
+              </div>
+            </div>
+            
+            <div class="card-body">
+              <div class="week-explorer-bar" style="background:#fff; border:1px solid var(--slate-200); border-radius:12px; padding:20px; margin-bottom:30px; display:flex; align-items:center; gap:25px;">
+                <div style="flex:1;">
+                  <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="font-size:12px; font-weight:700; color:var(--slate-500);">SELECT OPERATIONAL WEEK</span>
+                    <span style="font-size:14px; font-weight:800; color:var(--indigo-600);">Week <span id="advWeekVal">1</span></span>
+                  </div>
+                  <input type="range" min="1" max="52" value="1" class="week-slider w-full" id="advWeekRange" oninput="document.getElementById('advWeekVal').textContent = this.value; updateAdvancedHub();">
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns: 2fr 1fr; gap:30px;">
+                <div style="height:400px; background:white; padding:15px; border-radius:12px; border:1px solid var(--slate-100);">
+                  <canvas id="advHubCanvas"></canvas>
+                </div>
+                <div id="advInsightPanel" style="background:var(--indigo-50); border:1px solid var(--indigo-100); border-radius:12px; padding:25px;">
+                  <h4 style="color:var(--indigo-800); margin:0 0 15px 0;">✨ Temporal Intelligence</h4>
+                  <div id="advInsightText" style="font-size:14px; line-height:1.7; color:var(--indigo-900);">
+                    Select a factor and week to generate temporal intelligence...
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> <!-- end sectionAdvanced -->
+      </div> <!-- end workspace-area -->
+
+      <div id="sectionTrends" style="display:none;">
+        <div class="card mb-8">
+          <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 class="card-title">Multi-Segment Trend Engine</h3>
+            <div style="display:flex; gap:15px; align-items:center;">
+              <label style="font-size:12px; font-weight:700; color:var(--slate-500); display:flex; align-items:center; gap:8px;">
+                <input type="checkbox" id="trendYearWise" onchange="updateTrends()"> Compare Years (YoY)
+              </label>
+            </div>
+          </div>
+          <div class="card-body" style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 20px; align-items: end; padding: 24px;">
+            <div class="form-group">
+              <label class="detail-label">1. Compare Factors (e.g. Store, Product)</label>
+              <select id="trendFactor" class="select-input" onchange="updateTrends()"></select>
+            </div>
+            <div class="form-group">
+              <label class="detail-label">2. Measure (Y-Axis)</label>
+              <select id="trendMeasure" class="select-input" onchange="updateTrends()"></select>
+            </div>
+            <button class="btn btn-primary" style="height: 46px; padding: 0 30px;" onclick="updateTrends()">Refresh Trends</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <div style="height:450px;"><canvas id="trendCanvas"></canvas></div>
+            <div id="trendInsight" style="margin-top:20px; padding:20px; background:var(--blue-50); border-radius:12px; font-size:14px; color:var(--blue-900);">
+              Select a factor to generate comparative trend intelligence...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="debugArea" class="card mt-10" style="background:#1e293b; color:#94a3b8; font-family:monospace; font-size:12px;">
+        <div class="card-header"><h3 class="card-title" style="color:white; font-size:14px;">System Diagnostics</h3></div>
+        <div id="debugContent" class="card-body" style="padding:15px; max-height:150px; overflow-y:auto;">
+          Waiting for system init...
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="common.js?v=1006"></script>
+  <script src="eda_v2.js?v=1006"></script>
+  <script>
+    // ===== SYSTEM BRAIN (STABILITY MODE) =====
+    var _data = [];
+    var _types = { numeric: [], binary: [], others: [], all: [] };
+    var advChart = null;
+    var trendChart = null;
+
+    function dLog(msg, isError = false) {
+      var area = document.getElementById('debugContent');
+      if (area) area.innerHTML = `<div style="color:${isError ? 'red' : '#10b981'}">${msg}</div>` + area.innerHTML;
+    }
+
+    async function init() {
+      try {
+        var debugArea = document.getElementById('debugContent');
+        if (debugArea) debugArea.innerHTML = "<div>Connecting to session...</div>";
+
+        var state = JSON.parse(localStorage.getItem('eda_and_forecasting_state') || '{}');
+        var fileName = state.fileData?.fileName || "Data Session";
+        
+        if (typeof ensureData === 'function') _data = await ensureData();
+        
+        // Ensure _data is always parsed as an array
+        if (!Array.isArray(_data) || _data.length === 0) {
+          var raw = localStorage.getItem('fileData');
+          if (raw) {
+            try {
+              var parsed = JSON.parse(raw);
+              _data = Array.isArray(parsed) ? parsed : (parsed.data || []);
+            } catch (err) {
+              _data = [];
+            }
+          }
+        }
+
+        // Final safety fallback to guarantee _data is a valid array
+        if (!Array.isArray(_data)) {
+          _data = [];
+        }
+
+        if (_data.length === 0) {
+          dLog("CRITICAL: No data detected. Please re-upload.", true);
+          return;
+        }
+
+        dLog(`SUCCESS: ${fileName} Loaded.`);
+        var headerDesc = document.querySelector('.section-desc');
+        if (headerDesc) {
+          headerDesc.innerHTML = `Active Session: <strong>${fileName}</strong> | <strong>${_data.length.toLocaleString()}</strong> records.`;
+        }
+
+        // 1. Categorize
+        var cols = _data.length > 0 ? Object.keys(_data[0]) : [];
+        _types.all = cols;
+        _types.numeric = []; _types.binary = []; _types.others = [];
+        cols.forEach(c => {
+          var uniqueVals = new Set(_data.map(r => r[c])).size;
+          var sample = String(_data[0][c]).replace(/[$,]/g, "").trim();
+          var isNum = !isNaN(parseFloat(sample));
+
+          if (isNum && uniqueVals <= 2) _types.binary.push(c);
+          else if (isNum) _types.numeric.push(c);
+          else _types.others.push(c);
+        });
+
+        // 2. Populate
+        filterType('all');
+        updateAdvancedHub();
+        updateTrends();
+
+      } catch (e) {
+        console.error("Init Error:", e);
+        if (typeof dLog === 'function') dLog(`SYSTEM ERROR: ${e.message}`, true);
+      }
+    }
+
+    function switchTab(tab) {
+      document.getElementById('sectionCustom').style.display = tab === 'custom' ? 'block' : 'none';
+      document.getElementById('sectionAdvanced').style.display = tab === 'advanced' ? 'block' : 'none';
+      document.getElementById('sectionTrends').style.display = tab === 'trends' ? 'block' : 'none';
+      
+      document.getElementById('tabCustom').classList.toggle('active', tab === 'custom');
+      document.getElementById('tabAdvanced').classList.toggle('active', tab === 'advanced');
+      document.getElementById('tabTrends').classList.toggle('active', tab === 'trends');
+      
+      if (tab === 'advanced') updateAdvancedHub();
+      if (tab === 'trends') updateTrends();
+    }
+
+    function filterType(type) {
+      var cols = _types[type];
+      var xS = document.getElementById('columnX');
+      var yS = document.getElementById('columnY');
+      var aS = document.getElementById('advFactor');
+      var tS = document.getElementById('trendFactor');
+      var tM = document.getElementById('trendMeasure');
+      
+      var opts = cols.map(c => `<option value="${c}">${c}</option>`).join('');
+      if (xS) xS.innerHTML = opts;
+      if (yS) yS.innerHTML = opts;
+      if (aS) aS.innerHTML = `<option value="">Pick Comparison Factor...</option>` + opts;
+      if (tS) tS.innerHTML = opts;
+      if (tM) tM.innerHTML = _types.numeric.map(c => `<option value="${c}">${c}</option>`).join('');
+
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      document.getElementById(`btn-${type}`).classList.add('active');
+    }
+
+    function updateTrends() {
+      var factor = document.getElementById('trendFactor').value;
+      var measure = document.getElementById('trendMeasure').value;
+      var yoy = document.getElementById('trendYearWise').checked;
+      if (!factor || !measure) return;
+
+      var cols = Object.keys(_data[0]);
+      var dateCol = cols.find(c => c.toLowerCase().includes('date') || c.toLowerCase().includes('week')) || cols[0];
+
+      var getWk = (row) => {
+        var val = row[dateCol];
+        if (!isNaN(val)) return parseInt(val);
+        var d = new Date(val);
+        if (isNaN(d.getTime())) return 1;
+        var jan1 = new Date(d.getFullYear(), 0, 1);
+        return Math.ceil((((d - jan1) / 86400000) + jan1.getDay() + 1) / 7);
+      };
+
+      var getYear = (row) => {
+        var val = row[dateCol];
+        var d = new Date(val);
+        return isNaN(d.getTime()) ? 2024 : d.getFullYear();
+      };
+
+      var datasets = {};
+      _data.forEach(r => {
+        var seg = r[factor] || 'Other';
+        var yr = getYear(r);
+        var wk = getWk(r);
+        var val = parseFloat(String(r[measure]).replace(/[$,]/g, "")) || 0;
+        var dsKey = yoy ? `${seg} (${yr})` : seg;
+        if (!datasets[dsKey]) datasets[dsKey] = Array(53).fill(0);
+        datasets[dsKey][wk] += val;
+      });
+
+      var sortedKeys = Object.keys(datasets).sort((a,b) => datasets[b].reduce((s,v)=>s+v,0) - datasets[a].reduce((s,v)=>s+v,0)).slice(0, 10);
+      var colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#64748b'];
+      
+      var ctx = document.getElementById('trendCanvas').getContext('2d');
+      if (trendChart) trendChart.destroy();
+      trendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: Array.from({length: 52}, (_, i) => `Wk ${i+1}`),
+          datasets: sortedKeys.map((key, i) => ({
+            label: key, data: datasets[key].slice(1, 53), borderColor: colors[i % colors.length], borderWidth: 3, tension: 0.4, pointRadius: 0
+          }))
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } }
+      });
+
+      var insightEl = document.getElementById('trendInsight');
+      if (insightEl && sortedKeys.length > 0) {
+        var topKey = sortedKeys[0];
+        insightEl.innerHTML = `
+          <strong>Comparative Analysis:</strong><br><br>
+          • <strong>Leading Segment:</strong> '<strong>${topKey}</strong>' consistently outperforms other segments over the timeline.<br>
+          • <strong>Trend Pattern:</strong> The multi-segment engine detects strong variance across '${factor}'.<br><br>
+          <strong>Strategic Implication:</strong> Consider scaling successful strategies from the '${topKey}' segment across underperforming categories.
+        `;
+      } else if (insightEl) {
+        insightEl.innerHTML = "Not enough trend data to generate comparative intelligence.";
+      }
+    }
+    function updateAdvancedHub() {
+      var week = parseInt(document.getElementById('advWeekRange').value);
+      var factor = document.getElementById('advFactor').value;
+      if (!factor) return;
+
+      var isBinaryFactor = _types.binary.includes(factor);
+      var cols = Object.keys(_data[0]);
+      var unitsCol = cols.find(c => c.toLowerCase().includes('units') || c.toLowerCase().includes('sales')) || cols[0];
+      var dateCol = cols.find(c => c.toLowerCase().includes('date') || c.toLowerCase().includes('week')) || cols[0];
+
+      var getWk = (row) => {
+        var val = row[dateCol];
+        if (!isNaN(val)) return parseInt(val);
+        var d = new Date(val);
+        var jan1 = new Date(d.getFullYear(), 0, 1);
+        return isNaN(d.getTime()) ? 1 : Math.ceil((((d - jan1) / 86400000) + jan1.getDay() + 1) / 7);
+      };
+
+      var aggr = {}; var counts = {};
+      _data.filter(r => getWk(r) === week).forEach(r => {
+        var key = String(r[factor] || '0').trim();
+        if (isBinaryFactor) key = ["1", "1.0"].includes(key) ? "1" : "0";
+        var val = parseFloat(String(r[unitsCol]).replace(/[$,]/g, "")) || 0;
+        aggr[key] = (aggr[key] || 0) + val;
+        counts[key] = (counts[key] || 0) + 1;
+      });
+
+      if (isBinaryFactor) Object.keys(aggr).forEach(k => aggr[k] = aggr[k] / (counts[k] || 1));
+
+      // 1. Pick top 50 by VOLUME
+      var topKeys = Object.keys(aggr).sort((a, b) => aggr[b] - aggr[a]).slice(0, 50);
+
+      // 2. Sort those 50 by LABEL (Increasing)
+      var labels = topKeys.sort((a, b) => {
+        if (!isNaN(a) && !isNaN(b)) return parseFloat(a) - parseFloat(b);
+        return String(a).localeCompare(String(b), undefined, {numeric: true});
+      });
+      var values = labels.map(l => aggr[l]);
+
+      var ctx = document.getElementById('advHubCanvas').getContext('2d');
+      if (advChart) advChart.destroy();
+      advChart = new Chart(ctx, {
+        type: 'bar',
+        data: { labels: labels, datasets: [{ label: `Units`, data: values, backgroundColor: 'rgba(79, 70, 229, 0.7)' }] },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+
+      var insightEl = document.getElementById('advInsightText');
+      if (insightEl && labels.length > 0) {
+        if (isBinaryFactor && (labels.includes("0") || labels.includes("1"))) {
+          var val0 = aggr["0"] || 0;
+          var val1 = aggr["1"] || 0;
+          var diff = val1 - val0;
+          var pct = val0 !== 0 ? ((diff / val0) * 100).toFixed(1) : "100+";
+          
+          insightEl.innerHTML = `
+            <strong>Effectiveness Analysis (Week ${week}):</strong><br><br>
+            • <strong>Without ${factor} (0)</strong>: Avg units sold is ${val0.toLocaleString(undefined, {maximumFractionDigits:1})}.<br>
+            • <strong>With ${factor} (1)</strong>: Avg units sold is ${val1.toLocaleString(undefined, {maximumFractionDigits:1})}.<br><br>
+            <strong>Impact:</strong> Applying ${factor} leads to <strong>${Math.abs(pct)}% ${diff >= 0 ? 'higher' : 'lower'}</strong> performance on average this week.<br><br>
+            <strong>Summary:</strong> You sell <strong>${Math.abs(pct)}% ${diff >= 0 ? 'more' : 'less'} WITH ${factor}</strong> in Week ${week}.
+          `;
+        } else {
+          var maxIndex = values.indexOf(Math.max(...values));
+          var topLabel = labels[maxIndex];
+          var total = values.reduce((a, b) => a + b, 0);
+          insightEl.innerHTML = `
+            <strong>Week ${week} Analysis:</strong><br><br>
+            • <strong>Dominant Segment:</strong> '<strong>${topLabel}</strong>' was the most significant factor this week.<br>
+            • <strong>Total Volume:</strong> Evaluated across ${total.toLocaleString(undefined, {maximumFractionDigits:1})} units.<br><br>
+            <strong>Actionable Takeaway:</strong> Focus inventory and marketing efforts on the '${topLabel}' segment during this period to maximize returns.
+          `;
+        }
+      } else if (insightEl) {
+        insightEl.innerHTML = "Not enough data for this week to generate temporal intelligence.";
+      }
+    }
+
+    function quickGraph(keywordX, keywordY, type) {
+      dLog(`Running preset for ${keywordX}...`);
+      const cols = Object.keys(_data[0]);
+      
+      const xMatch = cols.find(c => c.toLowerCase().includes(keywordX.toLowerCase())) || cols[0];
+      const yMatch = cols.find(c => c.toLowerCase().includes(keywordY.toLowerCase())) || cols[1] || cols[0];
+      
+      document.getElementById('graphType').value = type;
+      document.getElementById('columnX').value = xMatch;
+      document.getElementById('columnY').value = yMatch;
+      
+      generateGraph();
+    }
+
+    function generateGraph() {
+      dLog("Generating Graph...");
+      const type = document.getElementById('graphType').value;
+      const x = document.getElementById('columnX').value;
+      const y = document.getElementById('columnY').value;
+      const id = 'ch-' + Date.now();
+      
+      document.getElementById('canvasEmptyState').style.display = 'none';
+
+      const card = `
+        <div class="card mb-8" id="${id}-card">
+          <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:15px;">
+              <h3 class="card-title">${y} by ${x}</h3>
+              <div class="type-toggle" style="display:flex; background:var(--slate-100); padding:3px; border-radius:6px;">
+                <button class="type-btn ${type === 'bar' ? 'active' : ''}" onclick="updateCardType('${id}', 'bar')">Bar</button>
+                <button class="type-btn ${type === 'line' ? 'active' : ''}" onclick="updateCardType('${id}', 'line')">Line</button>
+              </div>
+            </div>
+            <button style="border:none; background:transparent; cursor:pointer; color:var(--slate-400);" onclick="document.getElementById('${id}-card').remove()">✕</button>
+          </div>
+          <div class="card-body">
+            <div style="height:350px;"><canvas id="${id}-canvas"></canvas></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
+              <button class="btn-analyze-sparkle" onclick="toggleAnalyse('${id}', '${x}', '${y}')">✨ Analyse</button>
+              <span id="${id}-tag" style="font-size:11px; color:var(--slate-400); font-weight:600;">COUNT MODE</span>
+            </div>
+            <div id="${id}-insight" style="display:none; background:var(--blue-50); padding:15px; margin-top:15px; border-radius:8px;"></div>
+          </div>
+        </div>`;
+
+      document.getElementById('discoveryGrid').insertAdjacentHTML('afterbegin', card);
+
+      const aggr = {};
+      const counts = {}; // To calculate averages
+      let isNumeric = false;
+      const factorType = document.getElementById(`btn-binary`).classList.contains('active') ? 'binary' : 'other';
+      
+      _data.forEach(r => {
+        let vx = String(r[x] || '0').trim();
+        if (factorType === 'binary') vx = ["1", "1.0"].includes(vx) ? "1" : "0";
+
+        let rawY = String(r[y] || "").replace(/[$,]/g, "").trim();
+        const valY = parseFloat(rawY);
+        
+        if (!isNaN(valY) && rawY !== "") {
+          aggr[vx] = (aggr[vx] || 0) + valY;
+          counts[vx] = (counts[vx] || 0) + 1;
+          isNumeric = true;
+        } else {
+          aggr[vx] = (aggr[vx] || 0) + 1;
+        }
+      });
+
+      // For binary factors, we MUST use average to show effectiveness
+      if (factorType === 'binary' && isNumeric) {
+        Object.keys(aggr).forEach(k => aggr[k] = aggr[k] / (counts[k] || 1));
+      }
+
+      const tagEl = document.getElementById(`${id}-tag`);
+      if (factorType === 'binary') {
+        tagEl.textContent = '⚡ EFFECTIVENESS MODE (Averages)';
+        tagEl.style.color = 'var(--indigo-600)';
+      } else {
+        tagEl.textContent = isNumeric ? '📈 SUMMATION MODE (Actual Values)' : '📊 FREQUENCY MODE (Record Count)';
+        tagEl.style.color = isNumeric ? 'var(--blue-600)' : 'var(--slate-400)';
+      }
+
+      // 1. Pick top 50 by VOLUME (to keep graph clean)
+      const topKeys = Object.keys(aggr).sort((a, b) => aggr[b] - aggr[a]).slice(0, 50);
+
+      // 2. Sort those 50 by LABEL (to get the zig-zag / logical order)
+      const labels = topKeys.sort((a, b) => {
+        if (!isNaN(a) && !isNaN(b)) return parseFloat(a) - parseFloat(b);
+        return String(a).localeCompare(String(b), undefined, {numeric: true});
+      });
+      const values = labels.map(l => aggr[l]);
+
+      window[`chart_${id}`] = new Chart(document.getElementById(`${id}-canvas`), {
+        type: type,
+        data: {
+          labels: labels,
+          datasets: [{ 
+            label: y, 
+            data: values, 
+            backgroundColor: 'rgba(59, 130, 246, 0.7)',
+            borderColor: '#3b82f6',
+            borderWidth: 2,
+            tension: 0.3
+          }]
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { color: 'var(--slate-100)' } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    function updateCardType(id, newType) {
+      const chart = window[`chart_${id}`];
+      if (chart) {
+        chart.config.type = newType;
+        chart.update();
+        
+        // Update button UI
+        const btns = document.querySelectorAll(`#${id}-card .type-btn`);
+        btns.forEach(b => {
+          b.classList.remove('active');
+          if (b.textContent.toLowerCase() === newType) b.classList.add('active');
+        });
+      }
+    }
+
+    function toggleAnalyse(id, x, y) {
+      const el = document.getElementById(`${id}-insight`);
+      if (el.style.display === 'block') { el.style.display = 'none'; return; }
+      
+      el.style.display = 'block';
+      el.innerHTML = `<em>Analysing business effectiveness...</em>`;
+
+      const chart = window[`chart_${id}`];
+      const allLabels = chart.data.labels.map(l => String(l).trim());
+      const allValues = chart.data.datasets[0].data;
+      
+      const idx1 = allLabels.findIndex(l => ["1", "1.0"].includes(l));
+      const idx0 = allLabels.findIndex(l => l !== "1" && l !== "1.0");
+      const isBinary = (idx1 !== -1 && idx0 !== -1 && allLabels.length <= 2);
+
+      setTimeout(() => {
+        let analysisHTML = "";
+
+        if (isBinary) {
+          const val0 = allValues[idx0];
+          const val1 = allValues[idx1];
+          const diff = val1 - val0;
+          const pct = val0 !== 0 ? ((diff / val0) * 100).toFixed(1) : "100+";
+
+          analysisHTML = `
+            <strong>Effectiveness Analysis (Averages):</strong><br>
+            • <strong>Without ${x} (0)</strong>: Avg ${y} is ${val0.toLocaleString()}.<br>
+            • <strong>With ${x} (1)</strong>: Avg ${y} is ${val1.toLocaleString()}.<br><br>
+            <strong>Impact:</strong> Each occurrence of ${x} leads to <strong>${Math.abs(pct)}% ${diff >= 0 ? 'higher' : 'lower'}</strong> performance on average.<br><br>
+            <strong>Summary:</strong> You sell <strong>${Math.abs(pct)}% more per-day WITH ${x}</strong>.
+          `;
+        } else {
+          const max = Math.max(...allValues);
+          const avg = allValues.reduce((a, b) => a + b, 0) / (allValues.length || 1);
+          const pctAbove = (((max - avg) / avg) * 100).toFixed(1);
+
+          analysisHTML = `
+            <strong>Performance Breakdown:</strong><br>
+            Your peak segment for <strong>${x}</strong> is reaching <strong>${max.toLocaleString()}</strong> in total ${y}.<br><br>
+            <strong>Growth:</strong> This is <strong>${pctAbove}% higher</strong> than your average performance.<br><br>
+            <strong>Summary:</strong> High-performing ${x} segments are driving the bulk of your ${y}.
+          `;
+        }
+
+        el.innerHTML = analysisHTML;
+      }, 600);
+    }
+
+    function togglePresets() {
+      const panel = document.getElementById('presetsPanel');
+      const btn = event.target;
+      if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        btn.textContent = '💡 Hide Presets';
+      } else {
+        panel.style.display = 'none';
+        btn.textContent = '💡 Show Presets';
+      }
+    }
+
+    // GLOBAL START (ZERO-WAIT MODE)
+    console.log("Global script start...");
+    if (typeof injectNav === 'function') injectNav(3);
+    init();
+
+    // Final safety check for slow browsers
+    window.onload = () => {
+      if (typeof injectNav === 'function') injectNav(3);
+      const area = document.getElementById('debugContent');
+      if (area && area.innerText.includes('Waiting')) init();
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EDA and Forecasting - Data Explorer</title>
+  <meta name="description" content="Explore your uploaded data structure, review columns, and modify data types." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+
+  <main class="main-container">
+    <section class="step-section" id="step-1">
+      <div class="section-header">
+        <h2 class="section-title">Data Explorer</h2>
+        <p class="section-desc">Review your data structure and modify column data types if needed</p>
+      </div>
+
+      <div class="stats-grid" id="explorerStats">
+        <div class="stat-card">
+          <p class="stat-label">TOTAL COLUMNS</p>
+          <p class="stat-value" id="statColumns">0</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">TOTAL ROWS</p>
+          <p class="stat-value" id="statRows">0</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">FILE NAME</p>
+          <p class="stat-value stat-value-sm" id="statFileName">—</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">FILE SIZE</p>
+          <p class="stat-value stat-value-sm" id="statFileSize">—</p>
+        </div>
+      </div>
+
+      <div class="column-section">
+        <h3 class="subsection-title">Column Information</h3>
+        <div id="columnList" class="column-list">
+          <p class="empty-state">Please upload a file first</p>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn btn-primary" onclick="navigateTo(2)">
+          Continue to Preprocessing
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script src="common.js?v=1006"></script>
+  <script src="explorer.js?v=1006"></script>
+  <script>
+    // Inline row-count patch — runs every page load, cannot be cached.
+    // Fetches the authoritative rowCount from the backend and writes it directly to DOM.
+    (async function patchRowCount() {
+      try {
+        const raw = localStorage.getItem('eda_and_forecasting_state');
+        if (!raw) return;
+        const state = JSON.parse(raw);
+        const sessionId = state?.fileData?.sessionId;
+        if (!sessionId) return;
+
+        const API = 'http://' + (location.hostname || 'localhost') + ':8005/api';
+        const resp = await fetch(API + '/meta/' + sessionId);
+        if (!resp.ok) return;
+        const meta = await resp.json();
+        if (!meta.rowCount) return;
+
+        // Patch the DOM directly
+        const el = document.getElementById('statRows');
+        if (el) el.textContent = meta.rowCount.toLocaleString();
+      } catch (e) {
+        console.warn('Row count patch failed:', e.message);
+      }
+    })();
+  </script>
+</body>
+</html>

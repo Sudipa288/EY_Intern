@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "C:\Users\sudip\Downloads\EY\backend\main.py", line 318, in forecast_timeseries
+    results = await asyncio.to_thread(
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sudip\AppData\Local\Programs\Python\Python311\Lib\asyncio\threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sudip\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sudip\Downloads\EY\backend\services\forecaster.py", line 32, in train_models
+    df = df.groupby(date_col).agg(agg_map).reset_index().sort_values(date_col)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sudip\Downloads\EY\backend\venv\Lib\site-packages\pandas\core\frame.py", line 6220, in reset_index
+    new_obj.insert(
+  File "C:\Users\sudip\Downloads\EY\backend\venv\Lib\site-packages\pandas\core\frame.py", line 4931, in insert
+    raise ValueError(f"cannot insert {column}, already exists")
+ValueError: cannot insert Date, already exists

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EDA and Forecasting - Data Preprocessing</title>
+  <meta name="description" content="Clean and prepare your data for analysis. View null data, handle missing values, and apply preprocessing commands." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+
+  <main class="main-container">
+    <section class="step-section" id="step-2">
+      <div class="section-header">
+        <h2 class="section-title">Data Preprocessing</h2>
+        <p class="section-desc">Inspect data quality, handle missing values, and prepare your data for analysis</p>
+      </div>
+
+      <!-- ===== DATA QUALITY OVERVIEW ===== -->
+      <div class="card" id="nullOverviewCard">
+        <div class="card-header">
+          <h3 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Data Quality Overview
+          </h3>
+          <p class="card-desc">Null values detected in your dataset — review and decide how to handle them</p>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="stats-grid" id="nullStats" style="background: rgba(59, 130, 246, 0.05); border-radius: 12px; padding: 10px;">
+          <div class="stat-card">
+            <p class="stat-label">TOTAL ROWS</p>
+            <p class="stat-value" id="nullTotalRows">0</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-label">COMPLETELY NULL ROWS</p>
+            <p class="stat-value red-text" id="nullRowCount">0</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-label">TOTAL COLUMNS</p>
+            <p class="stat-value" id="nullTotalCols">0</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-label">COMPLETELY NULL COLUMNS</p>
+            <p class="stat-value red-text" id="nullColCount">0</p>
+          </div>
+        </div>
+
+        <!-- Per-Column Null Table -->
+        <div class="table-wrapper mt-4">
+          <table class="comparison-table" id="nullTable">
+            <thead>
+              <tr>
+                <th>Column</th>
+                <th>Type</th>
+                <th class="text-right">Null Count</th>
+                <th class="text-right">Null %</th>
+                <th style="width:200px">Distribution</th>
+              </tr>
+            </thead>
+            <tbody id="nullTableBody">
+              <tr><td colspan="5" class="empty-state">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== PREPROCESSING PROMPT ===== -->
+      <div class="card mt-6" id="promptCard">
+        <div class="card-header">
+          <h3 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            Preprocessing Prompt
+          </h3>
+          <p class="card-desc">Type a command to preprocess your data — operations are applied in sequence</p>
+        </div>
+
+        <div class="prompt-input-wrapper">
+          <input type="text" id="promptInput" class="prompt-input" placeholder="e.g. drop null rows, fill mean, drop column Price, drop duplicates..." autocomplete="off" />
+          <button class="btn btn-primary prompt-submit-btn" id="promptSubmitBtn" onclick="handlePromptSubmit()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Run
+          </button>
+        </div>
+
+        <div class="prompt-hints">
+          <span class="prompt-hint" onclick="fillPrompt('drop null rows')">drop null rows</span>
+          <span class="prompt-hint" onclick="fillPrompt('drop null columns')">drop null columns</span>
+          <span class="prompt-hint" onclick="fillPrompt('fill mean')">fill mean</span>
+          <span class="prompt-hint" onclick="fillPrompt('fill median')">fill median</span>
+          <span class="prompt-hint" onclick="fillPrompt('fill 0')">fill 0</span>
+          <span class="prompt-hint" onclick="fillPrompt('forward fill')">forward fill</span>
+          <span class="prompt-hint" onclick="fillPrompt('drop duplicates')">drop duplicates</span>
+        </div>
+
+        <!-- Action Log -->
+        <div id="actionLog" class="action-log hidden">
+          <h4 class="action-log-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="12 8 12 12 14 14"/><circle cx="12" cy="12" r="10"/></svg>
+            Applied Operations
+          </h4>
+          <div id="actionLogList" class="action-log-list"></div>
+        </div>
+      </div>
+
+      <!-- ===== SUMMARY ===== -->
+      <div class="card mt-6" id="summaryCard">
+        <div class="card-header">
+          <h3 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Summary
+          </h3>
+        </div>
+        <ul class="summary-list" id="summaryList">
+          <li>No operations applied yet. Use the prompt above to clean your data.</li>
+        </ul>
+      </div>
+
+      <div class="alert alert-error hidden" id="preprocessError">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div>
+          <p class="alert-title">Processing Error</p>
+          <p class="alert-msg" id="preprocessErrorMsg"></p>
+        </div>
+      </div>
+
+      <div class="alert alert-success hidden" id="preprocessSuccess">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div>
+          <p class="alert-title" style="color:var(--green-900)">Data processed successfully!</p>
+          <p class="alert-msg" style="color:var(--green-700)">Proceeding to EDA...</p>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn btn-primary" id="processBtn" onclick="handlePreprocess()">
+          Process Data
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </button>
+      </div>
+
+      <!-- Debug Area -->
+      <div id="debugArea" class="card mt-6" style="background:#1e293b; color:#94a3b8; font-family:monospace; font-size:12px;">
+        <div class="card-header"><h3 class="card-title" style="color:white">Data Debugger (First Row)</h3></div>
+        <div class="card-body" id="debugContent" style="padding:15px; overflow-x:auto;">Loading debug data...</div>
+      </div>
+    </section>
+  </main>
+
+  <script src="common.js?v=1006"></script>
+  <script src="preprocessing_v2.js?v=1006"></script>
+  <script>
+    (async function patchRowCount() {
+      try {
+        const raw = localStorage.getItem('eda_and_forecasting_state');
+        if (!raw) return;
+        const state = JSON.parse(raw);
+        const sessionId = state?.fileData?.sessionId;
+        if (!sessionId) return;
+
+        const API = 'http://' + (location.hostname || 'localhost') + ':8005/api';
+        const resp = await fetch(API + '/meta/' + sessionId);
+        if (!resp.ok) return;
+        const meta = await resp.json();
+        if (!meta.rowCount) return;
+
+        // Patch DOM directly for both stats elements
+        const el1 = document.getElementById('nullTotalRows');
+        if (el1) el1.textContent = meta.rowCount.toLocaleString();
+        
+        const el2 = document.getElementById('nullColCount');
+        if (el2 && meta.completelyNullColCount !== undefined) {
+          el2.textContent = meta.completelyNullColCount.toLocaleString();
+        }
+      } catch (e) {
+        console.warn('Row count patch failed:', e.message);
+      }
+    })();
+  </script>
+</body>
+</html>

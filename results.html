@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EDA and Forecasting - Analysis Results</title>
+  <meta name="description" content="Review your data analysis and forecasting results. Export findings in CSV, JSON, or PDF format." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+
+  <main class="main-container">
+    <section class="step-section" id="step-5">
+      <div class="section-header">
+        <h2 class="section-title">Analysis Complete</h2>
+        <p class="section-desc">Your data analysis and forecasting are complete. Review the results below.</p>
+      </div>
+
+      <!-- Empty state -->
+      <div id="resultsEmpty">
+        <p class="empty-state">No results available yet</p>
+      </div>
+
+      <!-- Success Banner -->
+      <div class="success-banner hidden" id="resultsBanner">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <h3 class="banner-title">Analysis Pipeline Complete</h3>
+        <p class="banner-desc">Your data has been successfully analyzed, visualized, and forecasted. The best performing model is <span class="bold" id="resultModelName"></span>.</p>
+      </div>
+
+      <!-- Results Grid -->
+      <div class="stats-grid hidden" id="resultsGrid">
+        <div class="stat-card"><p class="stat-label">BEST MODEL</p><p class="stat-value" id="resBestModel">—</p></div>
+        <div class="stat-card"><p class="stat-label">ACCURACY</p><p class="stat-value green-text" id="resAccuracy">—</p></div>
+        <div class="stat-card"><p class="stat-label">RMSE</p><p class="stat-value blue-text" id="resRmse">—</p></div>
+        <div class="stat-card"><p class="stat-label">MAPE</p><p class="stat-value orange-text" id="resMape">—</p></div>
+      </div>
+
+      <!-- Model Details -->
+      <div class="card mt-8 hidden" id="resultsDetails">
+        <h3 class="subsection-title mb-4">Selected Model Details</h3>
+        <div class="details-grid">
+          <div>
+            <h4 class="detail-heading">Model Information</h4>
+            <div class="detail-rows">
+              <div class="detail-row"><span>Model Name:</span><span class="bold" id="detModelName">—</span></div>
+              <div class="detail-row"><span>Type:</span><span class="bold">Time Series Forecasting</span></div>
+              <div class="detail-row"><span>Training Epochs:</span><span class="bold">100</span></div>
+            </div>
+          </div>
+          <div>
+            <h4 class="detail-heading">Performance Metrics</h4>
+            <div class="detail-rows">
+              <div class="detail-row"><span>Accuracy:</span><span class="bold" id="detAccuracy">—</span></div>
+              <div class="detail-row"><span>Root Mean Squared Error:</span><span class="bold" id="detRmse">—</span></div>
+              <div class="detail-row"><span>Mean Absolute Error:</span><span class="bold" id="detMae">—</span></div>
+              <div class="detail-row"><span>Mean Absolute Percentage Error:</span><span class="bold" id="detMape">—</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key Insights -->
+      <div class="card mt-8 hidden" id="resultsInsights">
+        <h3 class="subsection-title mb-4">Key Insights</h3>
+        <ul class="insights-list" id="insightsList"></ul>
+      </div>
+
+      <!-- Export -->
+      <div class="card mt-8 hidden" id="resultsExport">
+        <h3 class="subsection-title mb-4">Export Results</h3>
+        <div class="export-row">
+          <select id="exportFormat" class="select-input">
+            <option value="csv">CSV Format</option>
+            <option value="json">JSON Format</option>
+            <option value="pdf">PDF Report</option>
+          </select>
+          <button class="btn btn-primary" id="exportBtn" onclick="handleExport()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export Results
+          </button>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-row hidden" id="resultsActions">
+        <button class="btn btn-outline flex-1" onclick="resetApp()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          Start New Analysis
+        </button>
+        <div class="download-hint">
+          <p class="download-hint-title">Download model for production use</p>
+          <p class="download-hint-desc">Export the trained model to integrate into your applications</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="common.js?v=1007"></script>
+  <script src="results.js?v=1007"></script>
+</body>
+</html>

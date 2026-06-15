@@ -1,0 +1,11 @@
+Target Column: Inventory Level
+Models Requested: ['arima', 'prophet']
+DF Columns: ['0', 'Date', 'Store ID', 'Product ID', 'Category', 'Region', 'Inventory Level', 'Units Sold', 'Units Ordered', 'Price', 'Discount', 'Weather Condition', 'Promotion', 'Competitor Pricing', 'Seasonality', 'Epidemic', 'Demand']
+First 5 Rows of Target:
+0    195
+1    117
+2    247
+3    139
+4    152
+Target Dtype: int64
+Total Rows: 76001

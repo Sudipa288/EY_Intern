@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EDA and Forecasting - Time Series Forecasting</title>
+  <meta name="description" content="Select, train, and compare multiple forecasting models including ARIMA, Prophet, LSTM, XGBoost, Random Forest, and ETS." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="common.js?v=2000"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+
+  <main class="main-container">
+    <section class="step-section" id="step-4">
+      <div class="section-header">
+        <h1 class="section-title">🔮 Time Series Forecasting v2.0</h1>
+        <p class="section-desc">Select models to train, compare their accuracy, and choose the best one for your data.</p>
+      </div>
+
+      <div class="tabs">
+        <div class="tab-content active" id="fc-models">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">🛡️ Validation Strategy</h3>
+              <p class="card-desc">How should we verify the model accuracy?</p>
+            </div>
+
+            <div class="validation-path-selector">
+              <p class="detail-label mb-4" style="font-size: 1rem; color: var(--slate-900);">Do you have a dedicated Test File for validation?</p>
+              
+              <div class="radio-group horizontal" style="display: flex; gap: 2rem; margin-bottom: 2rem;">
+                <div class="strategy-card" id="strat-yes" style="flex: 1; padding: 1.25rem; border: 2px solid var(--slate-200); border-radius: var(--radius); cursor: pointer;" onclick="setValidationPath('yes')">
+                  <input type="radio" name="hasTestFile" id="test-yes" value="yes" onchange="setValidationPath('yes')" />
+                  <label for="test-yes" style="cursor: pointer; margin-left: 0.5rem;">
+                    <span class="bold" style="display: block;">Yes, I have a file</span>
+                    <span class="text-xs" style="color: var(--slate-500);">I will upload a separate test dataset.</span>
+                  </label>
+                </div>
+
+                <div class="strategy-card active" id="strat-no" style="flex: 1; padding: 1.25rem; border: 2px solid var(--slate-200); border-radius: var(--radius); cursor: pointer;" onclick="setValidationPath('no')">
+                  <input type="radio" name="hasTestFile" id="test-no" value="no" checked onchange="setValidationPath('no')" />
+                  <label for="test-no" style="cursor: pointer; margin-left: 0.5rem;">
+                    <span class="bold" style="display: block;">No, I don't</span>
+                    <span class="text-xs" style="color: var(--slate-500);">Split my current file into Train/Test.</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- PATH YES: UPLOAD -->
+              <div id="path-upload-container" class="hidden" style="margin-bottom: 2rem;">
+                <div class="card" style="border: 2px dashed var(--blue-400); background: var(--blue-50); text-align: center; padding: 2.5rem;">
+                  <h4 style="color: var(--blue-700); margin-bottom: 1rem;">📤 Upload your Validation Test File</h4>
+                  <input type="file" id="testFileInput" accept=".csv,.xlsx" onchange="onTestFileChange(event)" style="margin: 0 auto; display: block; border: 1px solid var(--blue-200); padding: 0.5rem; border-radius: 4px; background: #fff;" />
+                  <p class="file-status-text mt-4" id="testFileStatus" style="font-size: 1rem; color: var(--slate-700); font-weight: 700;">Waiting for your file...</p>
+                </div>
+              </div>
+
+              <!-- PATH NO: SPLIT -->
+              <div id="path-split-container" style="margin-bottom: 2rem;">
+                <div class="card" style="background: var(--slate-50); padding: 1.5rem; border: 1px solid var(--slate-200);">
+                  <p class="bold mb-3">Select Data Split Ratio</p>
+                  <select class="select-input" id="trainTestSplit" style="max-width: 300px; padding: 0.75rem;">
+                    <option value="0.9">90% Train / 10% Test</option>
+                    <option value="0.8" selected>80% Train / 20% Test</option>
+                    <option value="0.7">70% Train / 30% Test</option>
+                  </select>
+                  <p class="text-xs mt-3" style="color: var(--slate-500);">The system will reserve a percentage of your original data to test model accuracy.</p>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="card-header mt-8">
+              <h3 class="card-title">📊 Choose Forecasting Models</h3>
+              <p class="card-desc">Select one or more models to evaluate on your data</p>
+            </div>
+
+            <div class="model-checkbox-grid" id="modelCheckboxGrid">
+              <!-- ARIMA -->
+              <label class="model-checkbox-card checked" id="card-arima">
+                <input type="checkbox" value="arima" checked onchange="toggleModelCard(this)" />
+                <div class="model-checkbox-info">
+                  <p class="model-checkbox-name">ARIMA</p>
+                  <p class="model-checkbox-desc">AutoRegressive Integrated Moving Average</p>
+                  <span class="model-checkbox-tag baseline">Baseline</span>
+                </div>
+              </label>
+
+
+              <!-- LSTM -->
+              <label class="model-checkbox-card" id="card-lstm">
+                <input type="checkbox" value="lstm" onchange="toggleModelCard(this)" />
+                <div class="model-checkbox-info">
+                  <p class="model-checkbox-name">LSTM</p>
+                  <p class="model-checkbox-desc">Long Short-Term Memory Neural Network</p>
+                  <span class="model-checkbox-tag advanced">Deep Learning</span>
+                </div>
+              </label>
+              <!-- XGBoost -->
+              <label class="model-checkbox-card" id="card-xgboost">
+                <input type="checkbox" value="xgboost" onchange="toggleModelCard(this)" />
+                <div class="model-checkbox-info">
+                  <p class="model-checkbox-name">XGBoost</p>
+                  <p class="model-checkbox-desc">Gradient Boosted Trees with lag features</p>
+                  <span class="model-checkbox-tag ml">Machine Learning</span>
+                </div>
+              </label>
+              <!-- Random Forest -->
+              <label class="model-checkbox-card" id="card-random_forest">
+                <input type="checkbox" value="random_forest" onchange="toggleModelCard(this)" />
+                <div class="model-checkbox-info">
+                  <p class="model-checkbox-name">Random Forest</p>
+                  <p class="model-checkbox-desc">Ensemble of Decision Trees</p>
+                  <span class="model-checkbox-tag ml">ML</span>
+                </div>
+              </label>
+            </div>
+
+            <!-- Config -->
+            <div class="preprocess-layout mt-6">
+              <!-- Empty or other config if needed -->
+            </div>
+
+            <div class="train-actions">
+              <script>
+                async function triggerTraining() {
+                  console.log("[INLINE] triggerTraining started");
+                  const statusEl = document.getElementById('trainStatus');
+                  try {
+                    if (typeof getState !== 'function') throw new Error("common.js missing");
+                    const state = getState();
+
+                    const btn = document.getElementById('trainBtn');
+                    if (btn) { btn.disabled = true; btn.textContent = '⏳ Training...'; }
+                    if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = 'Starting training…'; }
+
+                    const api = (typeof API_BASE !== 'undefined') ? API_BASE : 'http://localhost:8005/api';
+                    let data = [];
+                    if (!state.fileData || !state.fileData.sessionId) {
+                      data = (typeof ensureData === 'function') ? await ensureData() : [];
+                    }
+
+                    // Auto-detect target column
+                    let targetColumn = '';
+                    if (state.fileData && state.fileData.columns) {
+                      const validCols = state.fileData.columns.filter(c => !c.name.toLowerCase().includes('date'));
+                      const numericCols = validCols.filter(c => {
+                        const t = String(c.originalType || c.currentType || '').toLowerCase();
+                        return t.includes('int') || t.includes('float') || t.includes('num');
+                      });
+                      const bestMatch = validCols.find(c => {
+                        const n = c.name.toLowerCase();
+                        return n.includes('sales') || n.includes('units') || n.includes('target') || n.includes('sold') || n.includes('price');
+                      });
+                      targetColumn = bestMatch ? bestMatch.name : (numericCols.length > 0 ? numericCols[0].name : (validCols.length > 0 ? validCols[0].name : 'target'));
+                    }
+
+                    const checkboxes = document.querySelectorAll('#modelCheckboxGrid input[type="checkbox"]:checked');
+                    const models = Array.from(checkboxes).map(cb => cb.value);
+                    if (models.length === 0) throw new Error("Please select at least one model.");
+
+                    const splitSelect = document.getElementById('trainTestSplit');
+                    const splitValue = splitSelect ? parseFloat(splitSelect.value) : 0.8;
+
+                    if (statusEl) statusEl.textContent = `Training ${models.join(', ')} on "${targetColumn}"…`;
+
+                    const payload = {
+                      sessionId: state.fileData ? state.fileData.sessionId : null,
+                      data: (state.fileData && state.fileData.sessionId) ? null : data,
+                      config: {
+                        targetColumn: targetColumn || 'target',
+                        models: models,
+                        trainTestSplit: splitValue,
+                        forecastHorizon: 30,
+                        seasonality: 12
+                      }
+                    };
+
+                    const resp = await fetch(api + "/forecast", {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(payload)
+                    });
+
+                    if (!resp.ok) {
+                      const errData = await resp.json().catch(() => ({}));
+                      throw new Error("Backend Error (" + resp.status + "): " + (errData.detail || JSON.stringify(errData)));
+                    }
+
+                    const result = await resp.json();
+                    window.trainedResults = result.models || [];
+
+                    // Persist results (including forecast_dates) to state
+                    setState({ modelResults: window.trainedResults });
+
+                    if (statusEl) statusEl.textContent = `✅ Done! ${window.trainedResults.length} model(s) trained.`;
+
+                    const resultsArea = document.getElementById('fc-results');
+                    if (resultsArea) {
+                      resultsArea.classList.add('active');
+                      resultsArea.style.display = 'block';
+                      if (typeof renderValidationCharts === 'function') renderValidationCharts(window.trainedResults);
+                      if (typeof renderDynamicComparison === 'function') renderDynamicComparison();
+                      resultsArea.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  } catch (e) {
+                    console.error("Training error:", e);
+                    if (statusEl) { statusEl.style.color = '#ef4444'; statusEl.textContent = '❌ Error: ' + e.message; }
+                    else alert("INNER ERROR: " + e.message);
+                  } finally {
+                    const btn = document.getElementById('trainBtn');
+                    if (btn) { btn.disabled = false; btn.textContent = 'Train Selected Models'; }
+                  }
+                };
+              </script>
+              <button class="btn btn-primary" id="trainBtn" onclick="triggerTraining()">
+                Train Selected Models
+              </button>
+              <p id="trainStatus" style="display:none; margin-top: 0.75rem; font-size: 0.9rem; font-weight: 600; color: #10b981;"></p>
+            </div>
+
+            <div class="alert alert-error hidden mt-4" id="trainError">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <div>
+                <p class="alert-title">Training Error</p>
+                <p class="alert-msg" id="trainErrorMsg"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== RESULTS & COMPARE TAB ===== -->
+        <div class="tab-content" id="fc-results">
+          <!-- Individual Model Graphs Grid -->
+          <div class="card mb-8">
+            <div class="card-header">
+              <h3 class="card-title">🎯 Model Validation (Actual vs Predicted)</h3>
+              <p class="card-desc">Comparing predictions against test data for every model</p>
+            </div>
+            <div id="validationChartsGrid" class="validation-charts-grid">
+              <!-- Individual charts injected here -->
+            </div>
+          </div>
+
+          <div class="preprocess-layout">
+            <!-- Dynamic Comparison Table -->
+            <div class="card" id="comparisonCard">
+              <div class="card-header">
+                <h3 class="card-title">⚖️ Model Performance Leaderboard</h3>
+                <p class="card-desc">Ranked by accuracy — Best performer highlighted</p>
+              </div>
+              <div class="table-wrapper">
+                <table class="comparison-table results-table-dynamic" id="dynamicCompTable">
+                  <thead id="dynamicCompHead"></thead>
+                  <tbody id="dynamicCompBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Winner Card -->
+            <div class="card green-bg green-border" id="winnerCard">
+              <div class="card-header">
+                <h3 class="card-title">🏆 AI Selection</h3>
+              </div>
+              <p class="insight-text" id="winnerText">Evaluated based on lowest RMSE and highest Accuracy Score.</p>
+              
+              <div class="mt-4" id="bestModelForecastAction" style="display: none;">
+                <button class="btn" style="background-color: #10b981; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);" onclick="revealBestForecast()">
+                  ✨ Generate Future Forecast with Best Model
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Best Model Future Forecast Chart -->
+          <div class="card mt-6" id="bestForecastCard" style="display: none;">
+            <div class="card-header">
+              <h3 class="card-title">🚀 Future Forecast: <span id="bestModelNameTitle" class="green-text">Best Model</span></h3>
+              <p class="card-desc">Projecting the next 30 periods into the future using the most accurate AI model.</p>
+            </div>
+            <div class="chart-container" style="height: 350px;">
+              <canvas id="chartBestForecast"></canvas>
+            </div>
+          </div>
+
+          <!-- Forecast Text Summary -->
+          <div class="card mt-6" id="forecastSummaryCard" style="display: none; background-color: #f8fafc; border-left: 4px solid #3b82f6;">
+            <div class="card-header">
+              <h3 class="card-title">📝 Executive Summary</h3>
+            </div>
+            <div class="card-body" style="padding: 1.5rem;">
+              <p id="forecastSummaryText" style="font-size: 1.05rem; line-height: 1.6; color: #334155; margin: 0;"></p>
+            </div>
+          </div>
+
+          <!-- Dynamic Comparison Chart -->
+          <div class="card mt-6" id="comparisonChartCard">
+            <div class="card-header">
+              <h3 class="card-title">📊 Accuracy Comparison Overview</h3>
+            </div>
+            <div class="chart-container chart-md"><canvas id="chartDynamicComparison"></canvas></div>
+          </div>
+        </div>
+
+        <!-- ===== ARIMA DETAIL TAB ===== -->
+        <div class="tab-content" id="fc-arima">
+          <div class="metric-grid-3">
+            <div class="metric-card red-bg">
+              <div class="metric-content">
+                <div><p class="metric-label">ARIMA Model</p><p class="metric-value red-text">13,160</p><p class="metric-sub">Root Mean Square Error</p></div>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="red-icon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+            </div>
+            <div class="metric-card red-bg">
+              <div class="metric-content">
+                <div><p class="metric-label">Mean Squared Error</p><p class="metric-value red-text">173.2M</p><p class="metric-sub">MSE Value</p></div>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="red-icon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+            </div>
+            <div class="metric-card red-bg">
+              <div class="metric-content">
+                <div><p class="metric-label">Model Type</p><p class="metric-value red-text">Basic</p><p class="metric-sub">Univariate</p></div>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="red-icon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="card mt-6">
+            <div class="card-header">
+              <h3 class="card-title">📈 ARIMA Forecast vs Actual</h3>
+              <p class="card-desc">Order (1,1,1) — baseline model performance</p>
+            </div>
+            <div class="chart-container"><canvas id="chartArima"></canvas></div>
+          </div>
+          <div class="card mt-6">
+            <div class="card-header"><h3 class="card-title">🔍 ARIMA Analysis</h3></div>
+            <div class="analysis-grid">
+              <div class="insight-box red border-left-red">
+                <p class="insight-title">❌ Limitations</p>
+                <ul class="insight-list"><li>• Captures only general trend</li><li>• Almost flat forecast line</li><li>• Misses sharp changes</li><li>• Underfitting behavior</li></ul>
+              </div>
+              <div class="insight-box blue border-left-blue">
+                <p class="insight-title">✓ Strengths</p>
+                <ul class="insight-list"><li>• Simple and fast</li><li>• Good baseline model</li><li>• Low computational cost</li><li>• Easy to interpret</li></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== PROPHET DETAIL TAB ===== -->
+        <div class="tab-content" id="fc-prophet">
+          <!-- ... Prophet content ... -->
+          <div class="metric-grid-4">
+            <div class="metric-card green-bg">
+              <div class="metric-content">
+                <div><p class="metric-label">Prophet Model</p><p class="metric-value green-700-text">7,495</p><p class="metric-sub">Root Mean Square Error</p></div>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+            </div>
+            <div class="metric-card green-bg">
+              <div class="metric-content">
+                <div><p class="metric-label">Accuracy</p><p class="metric-value green-700-text">87%</p><p class="metric-sub">Prediction Accuracy</p></div>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+            </div>
+            <div class="metric-card green-bg">
+              <div class="metric-content">
+                <div><p class="metric-label">Mean Absolute Error</p><p class="metric-value green-700-text">5,842</p><p class="metric-sub">MAE Value</p></div>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+            </div>
+            <div class="metric-card green-bg">
+              <div class="metric-content">
+                <div><p class="metric-label">Train-Test Split</p><p class="metric-value green-700-text">50-50</p><p class="metric-sub">Data Division</p></div>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div> <!-- End of Tabs -->
+
+      <div class="step-actions">
+        <button class="btn btn-green" onclick="navigateTo(5)">
+          View Results &amp; Export
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script src="charts.js?v=2002"></script>
+  <script src="forecasting.js?v=2002"></script>
+</body>
+</html>
