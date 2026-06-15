@@ -6,8 +6,6 @@
 
 Built during my internship at EY (Ernst & Young)
 
-<img src="images/upload.png" width="95%">
-
 </div>
 
 ---
@@ -39,7 +37,7 @@ From dataset upload to future prediction, the platform helps users analyze data,
 ## 📂 Dataset Upload & Data Import
 
 <p align="center">
-<img src="images/upload.png" width="90%">
+<img src="images/upload.png" width="90%",height="80%">
 </p>
 
 Upload datasets and automatically prepare them for analysis.
